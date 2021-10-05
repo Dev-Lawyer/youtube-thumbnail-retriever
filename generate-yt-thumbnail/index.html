@@ -1,0 +1,70 @@
+<!-- 
+  https://github.com/OctavioSI 
+  Este arquivo é acessado diretamente do endereço pelo browser, 
+  e consiste em um código para um arquivo SVG.  Em tese, conseguimos 
+  usar esse SVG para alimentar um arquivo de imagem e poderíamos simplesmente
+  passar como endereço essa imagem e os parâmetros necessários para carregar 
+  esse layout.
+
+  A questão que fica é se o GitHub vai aceitar um arquivo SVG que processa 
+  javascript por trás dos panos. 
+-->
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width="250" height="220" viewBox="0 0 250 220" fill="none">
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Roboto');
+	</style>
+	<defs>
+		<clipPath id="image-clip">
+			<use xlink:href="#rect"/>
+		</clipPath>
+	</defs>
+	<!-- Retângulo container -->
+	<rect id="rect" height="100%" width="100%" fill="#F9F9F9" />
+	<!-- Thumbnail -->
+	<g>
+		<image href="" id="videoThumbnail" height="140" width="250" clip-path="url(#image-clip)" />
+	</g>
+	<!-- Título do vídeo -->
+	<g transform="translate(10, 170)">
+		<text fill="#1a1a03" font-family="Roboto, Arial, sans-serif" font-weight="600" font-size="15px" id="videoTitle">
+			No id specified.
+		</text>
+	</g>
+	<!-- Data e visualizações -->
+	<g transform="translate(10, 195)">
+		<text fill="#606060" font-family="Roboto, Arial, sans-serif" font-weight="400" font-size="13px" id="viewsNDate">
+			0 visualizações • há 27 dias
+		</text>
+	</g>
+  <!-- 
+    Abaixo fica o nosso código em javascript.
+    A função dele é substituir as informações do nosso layout acima
+    e colocar informações que forem relevantes. Nesta versão mockup os
+    dados estão fixos, sem carregamento automático ainda.  
+  -->
+  <script type="text/javascript">
+    updateText("videoTitle", "Testing");
+    updateThumbnail("videoThumbnail", "https://i.ytimg.com/vi/keKOJEhhDqY/mqdefault.jpg");
+    updateViewsNDate("viewsNDate", "33", "10");
+
+    function updateText(tspanId, txt) {
+      var spanEl = document.getElementById(tspanId);
+      while( spanEl.firstChild ) {
+        spanEl.removeChild( spanEl.firstChild );
+      }
+      spanEl.appendChild( document.createTextNode(txt) );
+    }
+    function updateThumbnail(tspanId, url) {
+      var spanEl = document.getElementById(tspanId);
+      spanEl.setAttribute("clip-path", url);
+      spanEl.setAttribute("href", url);
+    }
+    function updateViewsNDate(tspanId, views, date) {
+      var spanEl = document.getElementById(tspanId);
+      while( spanEl.firstChild ) {
+        spanEl.removeChild( spanEl.firstChild );
+      }
+      spanEl.appendChild( document.createTextNode(views+' visualizações • há '+date+' dias') );
+    }
+  </script>
+</svg>
