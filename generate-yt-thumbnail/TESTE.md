@@ -1,1 +1,1 @@
-![teste de imagem](https://octaviosi.github.io/generate-yt-thumbnail/index.html?channelId=UCPmM6RAkfC0CY2gGudIhWQA&videoId=cnIYisCYlzM)
+![teste de imagem](https://github.com/OctavioSI/OctavioSI.github.io/blob/master/generate-yt-thumbnail/thumbnail.svg?channelId=UCPmM6RAkfC0CY2gGudIhWQA&videoId=cnIYisCYlzM)
