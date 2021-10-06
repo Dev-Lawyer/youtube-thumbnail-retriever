@@ -10,25 +10,9 @@
   passar como endereço essa imagem e os parâmetros necessários para carregar 
   esse layout.
 -->
-<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width="250" height="220" viewBox="0 0 250 220" fill="none">
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width="250" height="220" viewBox="0 0 250 220" fill="none" id="svgfile">
 	<style>
-    /*
-      Abaixo importamos a fonte utilizada no texto e definimos um 
-      estilo para o título do vídeo, que além do estilo do texto
-      devem também ser cortado na segunda linha se a ultrapassar
-    */
 		@import url('https://fonts.googleapis.com/css2?family=Roboto');
-    #videoTitle{
-      color:#1a1a03;
-      font-family:Roboto, Arial, sans-serif;
-      font-weight:600;
-      font-size:15px;      
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 2; 
-      -webkit-box-orient: vertical;
-    }
 	</style>
 	<defs>
 		<clipPath id="image-clip">
@@ -49,9 +33,32 @@
       cima deste arquivo ☝️)
     -->
     <foreignObject width="95%" height="100%">
+      <style>
+      /*
+        Abaixo importamos a fonte utilizada no texto e definimos um 
+        estilo para o título do vídeo, que além do estilo do texto
+        devem também ser cortado na segunda linha se a ultrapassar
+      */
+      body{
+        margin:0;
+      }
+      #videoTitle{
+        color:#1a1a03;
+        font-family:Roboto, Arial, sans-serif;
+        font-weight:600;
+        font-size:15px;      
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; 
+        -webkit-box-orient: vertical;
+      }
+    </style>
+      <body xmlns="http://www.w3.org/1999/xhtml">
       <p id="videoTitle">
         Nenhum id definido
-      </p>  
+      </p>
+      </body>
 	  </foreignObject>
 	</g>
 	<!-- Data e visualizações -->
@@ -60,43 +67,131 @@
 			0 visualizações • há 27 dias
 		</text>
 	</g>
-  <!-- 
-    Abaixo fica o nosso código em javascript.
-    A função dele é buscar informações no XML que o YouTube fornece e substituir 
-    as informações do nosso layout acima e colocar informações que forem relevantes.
-    
-    Note que parece não fazer sentido carregar aqui todos os dados novamente, já que os carregamos 
-    lá no README, mas o script utilizado tem algumas limitações, como a busca por elementos que 
-    estão dentro de outras tags no XML e, principalmente, pelo layout que queremos usar.
-    
-    Portanto, o que faremos neste caso é apenas passar o canal (para a busca XML completa) e o
-    id do vídeo que queremos (para comparação ao filtrar os resultados)
-  -->
-  <script type="text/javascript">
+</svg>
+
+<!-- 
+      Abaixo fica o nosso código em javascript.
+      A função dele é buscar informações no XML que o YouTube fornece e substituir 
+      as informações do nosso layout acima e colocar informações que forem relevantes.
+      
+      Note que parece não fazer sentido carregar aqui todos os dados novamente, já que os carregamos 
+      lá no README, mas o script utilizado tem algumas limitações, como a busca por elementos que 
+      estão dentro de outras tags no XML e, principalmente, pelo layout que queremos usar.
+      
+      Portanto, o que faremos neste caso é apenas passar o canal (para a busca XML completa) e o
+      id do vídeo que queremos (para comparação ao filtrar os resultados)
+    -->
+<script>
+    //<![CDATA[
+    /*
+      Esta é a função principal, que baixa as informações do YouTube e chama as funções que substituem
+      os dados no desenho SVG. 
+
+      Basicamente o XML é baixado e:
+      (i) a função procura por cada registro (marcada no XML como uma "entry");
+      (ii) em cada entry, procuramos pela tag yt:videoId;
+      (iii) se essa videoId for igual à videoId que recebemos neste arquivo, significa que a entrada 
+      corresponde ao vídeo correto. Então, chamamos as funções que trocam as informações no SVG pelas 
+      informações baixadas.
+
+      E só.
+    */
+    function getXMLData(request) {
+        var xml = request.responseXML;
+        var entries = xml.getElementsByTagName("entry");
+        var found = false;
+        for (var i = 0; i < entries.length && !found; i++) {
+            var entry = entries[i];
+            var currentVideoId = entry.getElementsByTagName("yt:videoId");
+            if (currentVideoId[0].innerHTML === videoId) { // Encontramos o vídeo!
+                updateText("videoTitle", entry.getElementsByTagName("title")[0].innerHTML);
+                updateThumbnail(
+                    "videoThumbnail",
+                    "https://i.ytimg.com/vi/" + currentVideoId[0].innerHTML + "/mqdefault.jpg" // este é o endereço padrão que o YouTube usa para Thumbnails
+                );
+                // Vamos encontrar agora os dados de data de publicação e contagem de visualizações
+                var publishedDate = entry.getElementsByTagName("published")[0].innerHTML;
+                var mediagroup = entry.getElementsByTagName("media:group")[0];
+                var mediacommunity = mediagroup.getElementsByTagName("media:community")[0];
+                var mediastats = mediacommunity.getElementsByTagName("media:statistics")[0];
+                var views = mediastats.getAttribute('views');
+                updateViewsNDate("viewsNDate", views, publishedDate);
+                found = true;
+            }
+        }
+    }
+
+    function updateText(tspanId, txt) {
+        var spanEl = document.getElementById(tspanId);
+        while (spanEl.firstChild) {
+            spanEl.removeChild(spanEl.firstChild);
+        }
+        spanEl.appendChild(document.createTextNode(txt));
+    }
+
+    function updateThumbnail(tspanId, url) {
+        var spanEl = document.getElementById(tspanId);
+        spanEl.setAttribute("clip-path", url);
+        spanEl.setAttribute("href", url);
+    }
+
+    function updateViewsNDate(tspanId, views, dateString) {
+        var spanEl = document.getElementById(tspanId);
+        while (spanEl.firstChild) {
+            spanEl.removeChild(spanEl.firstChild);
+        }
+        spanEl.appendChild(document.createTextNode(views + ' visualizações • ' + formatDate(dateString)));
+    }
+    /*
+      Função que serve para formatar uma data recebida no formato UTC (e.g. 2020-05-25T04:00:00Z)
+      Para uma data mais amigável para leitura humana.
+
+      Código original acessado em https://css-tricks.com/how-to-convert-a-date-string-into-a-human-readable-format/
+    */
+    function formatDate(dateString) {
+        const options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        };
+        return new Date(dateString).toLocaleDateString('pt-BR', options);
+    };
+
+    function createImage() {
+        let newsvg = document.getElementById('svgfile').outerHTML;
+        let blob = new Blob([newsvg], {
+            type: 'image/svg+xml'
+        });
+        let newurl = URL.createObjectURL(blob);
+        let image = document.createElement('img');
+        image.src = newurl;
+        image.addEventListener('load', () => URL.revokeObjectURL(url), {
+            once: true
+        });
+        console.log(image);
+    }
+
     /*
 
-       Vamos comentar aqui o que está sendo feito abaixo. Basicamente recebemos nesse arquivo
-       duas informações para montar o nosso layout de vídeo: o ID do canal no YouTube e o ID do vídeo.
+          Vamos comentar aqui o que está sendo feito abaixo. Basicamente recebemos nesse arquivo
+          duas informações para montar o nosso layout de vídeo: o ID do canal no YouTube e o ID do vídeo.
 
-       - Com o ID do canal, baixamos do YouTube todo o XML com os detalhes de vídeos.
-       - Com o ID do vídeo, filtramos o resultado acima até conseguir achar a correspondência.
+          - Com o ID do canal, baixamos do YouTube todo o XML com os detalhes de vídeos.
+          - Com o ID do vídeo, filtramos o resultado acima até conseguir achar a correspondência.
 
-    */
+        */
 
     const urlStr = window.location.href;
     const channelId = urlStr.replace(/.*channelId=([^&]*).*|(.*)/, '$1');
     const videoId = urlStr.replace(/.*videoId=([^&]*).*|(.*)/, '$1');
-    
-    console.log('channelId', channelId);
-    console.log('videoId', videoId);
 
     /*
-       Para fins do exemplo aqui, note que eu tive problemas em testar o código abaixo no meu computador
-       local (ou seja, simplesmente abrindo o arquivo index.html no meu navegador), recebendo um erro de CORS:
+      Para fins do exemplo aqui, note que eu tive problemas em testar o código abaixo no meu computador
+      local (ou seja, simplesmente abrindo o arquivo index.html no meu navegador), recebendo um erro de CORS:
 
-         Access to XMLHttpRequest at 'https://www.youtube.com/feeds/videos.xml?channel_id=UCPmM6RAkfC0CY2gGudIhWQA' 
-         from origin 'null' has been blocked by CORS policy: The 'Access-Control-Allow-Origin' header contains 
-         the invalid value 'null//undefined'.
+        Access to XMLHttpRequest at 'https://www.youtube.com/feeds/videos.xml?channel_id=UCPmM6RAkfC0CY2gGudIhWQA' 
+        from origin 'null' has been blocked by CORS policy: The 'Access-Control-Allow-Origin' header contains 
+        the invalid value 'null//undefined'.
 
         Esse erro ocorre pois o YouTube bloqueia o acesso da origem local. Para resolver isso, eu rodei 
         este arquivo a partir do VSCode, usando a extensão Live Server (clicando com o botão direito no arquivo, 
@@ -108,86 +203,17 @@
         substituí-los no desenho SVG.
 
         */
-    var url = "https://www.youtube.com/feeds/videos.xml?channel_id="+channelId;
+    var url = "https://www.youtube.com/feeds/videos.xml?channel_id=" + channelId;
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function(){
-      if(this.readyState == 4 && this.status == 200){
-        getXMLData(this);
-      }
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            getXMLData(this);
+            window.addEventListener("load", function() {
+                createImage();
+            });
+        }
     }
     xhttp.open("GET", url, true);
     xhttp.send();
-
-    /*
-       Esta é a função principal, que baixa as informações do YouTube e chama as funções que substituem
-       os dados no desenho SVG. 
-
-       Basicamente o XML é baixado e:
-       (i) a função procura por cada registro (marcada no XML como uma "entry");
-       (ii) em cada entry, procuramos pela tag yt:videoId;
-       (iii) se essa videoId for igual à videoId que recebemos neste arquivo, significa que a entrada 
-       corresponde ao vídeo correto. Então, chamamos as funções que trocam as informações no SVG pelas 
-       informações baixadas.
-
-       E só.
-    */
-    function getXMLData(request){
-      var xml = request.responseXML;
-      var entries = xml.getElementsByTagName("entry");
-      var found = false;
-      for(var i = 0; i < entries.length && !found; i++) {
-          var entry = entries[i];
-          var currentVideoId = entry.getElementsByTagName("yt:videoId");
-          if(currentVideoId[0].innerHTML === videoId){ // Encontramos o vídeo!
-            updateText("videoTitle", entry.getElementsByTagName("title")[0].innerHTML);
-            updateThumbnail(
-                "videoThumbnail", 
-                "https://i.ytimg.com/vi/"+currentVideoId[0].innerHTML+"/mqdefault.jpg" // este é o endereço padrão que o YouTube usa para Thumbnails
-            ); 
-            // Vamos encontrar agora os dados de data de publicação e contagem de visualizações
-            var publishedDate = entry.getElementsByTagName("published")[0].innerHTML;
-            var mediagroup = entry.getElementsByTagName("media:group")[0];
-            var mediacommunity = mediagroup.getElementsByTagName("media:community")[0];
-            var mediastats = mediacommunity.getElementsByTagName("media:statistics")[0];
-            var views = mediastats.getAttribute('views');
-            updateViewsNDate("viewsNDate", views, publishedDate);
-            found = true;
-          }
-      }
-    }
-
-    function updateText(tspanId, txt) {
-      var spanEl = document.getElementById(tspanId);
-      while( spanEl.firstChild ) {
-        spanEl.removeChild( spanEl.firstChild );
-      }
-      spanEl.appendChild( document.createTextNode(txt) );
-    }
-
-    function updateThumbnail(tspanId, url) {
-      var spanEl = document.getElementById(tspanId);
-      spanEl.setAttribute("clip-path", url);
-      spanEl.setAttribute("href", url);
-    }
-    
-    function updateViewsNDate(tspanId, views, dateString) {
-      var spanEl = document.getElementById(tspanId);
-      while( spanEl.firstChild ) {
-        spanEl.removeChild( spanEl.firstChild );
-      }
-      spanEl.appendChild( document.createTextNode(views+' visualizações • '+formatDate(dateString)) );
-    }
-
-    /*
-       Função que serve para formatar uma data recebida no formato UTC (e.g. 2020-05-25T04:00:00Z)
-       Para uma data mais amigável para leitura humana.
-
-       Código original acessado em https://css-tricks.com/how-to-convert-a-date-string-into-a-human-readable-format/
-    */
-    function formatDate(dateString){
-      const options = { year: "numeric", month: "long", day: "numeric" };
-      return new Date(dateString).toLocaleDateString('pt-BR', options);
-    };
-
-  </script>
-</svg>
+    //]]>
+</script>
