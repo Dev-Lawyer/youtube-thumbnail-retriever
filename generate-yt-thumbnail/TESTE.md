@@ -1,0 +1,1 @@
+![teste de imagem](https://octaviosi.github.io/generate-yt-thumbnail/index.html?channelId=UCPmM6RAkfC0CY2gGudIhWQA&videoId=cnIYisCYlzM)
