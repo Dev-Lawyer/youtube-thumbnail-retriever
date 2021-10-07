@@ -19,6 +19,7 @@ const channelId = "UCPmM6RAkfC0CY2gGudIhWQA";
 let videoTitle = "";
 let videoViews = "";
 let videoPublishedDate;
+let videoThumbnail = "";
 
 // vamos exportar a função que baixa o XML do YouTube
 module.exports = {
@@ -52,11 +53,13 @@ function getYTThumbnail(videoId) {
                         // Precisamos fazer o request abaixo para baixar a imagem do YouTube e convertê-la para base64, já que o Markdown não 
                         // está aceitando a imagem por URL simples
                         request.get({ url: "https://i.ytimg.com/vi/" + videoId + "/mqdefault.jpg", encoding: null }, (err, res, body) => {
+                            videoThumbnail = '';
                             if (!err) {
                                 const type = res.headers["content-type"];
                                 const prefix = "data:" + type + ";base64,";
                                 const base64 = body.toString('base64');
-                                const videoThumbnail = prefix + base64;
+                                videoThumbnail = prefix + base64;
+
                                 finalxml = `
                       <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width="250" height="220" viewBox="0 0 250 220" fill="none" id="svgfile">
                         <style>
@@ -144,6 +147,9 @@ function getYTThumbnail(videoId) {
         E só.
 */
 function getXMLData(xmlString, videoId) {
+    videoTitle = '';
+    videoViews = '';
+    videoPublishedDate = '';
     var DOMParser = new(require('xmldom')).DOMParser;
     var xml = DOMParser.parseFromString(xmlString);
     var entries = xml.getElementsByTagName("entry");
