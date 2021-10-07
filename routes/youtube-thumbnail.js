@@ -8,7 +8,11 @@ ytthumbnail.get('/youtube-thumbnail', (req, res, next) => {
     res.header('Content-Type', 'image/svg+xml');
     res.header('Expires', '0');
     res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.send(mainfunctions.getBadge(`Hits: ${++counter}`));
+    mainfunctions.getYTThumbnail('cnIYisCYlzM').then(result => {
+        res.send(result);
+    }).catch(error => {
+        console.log(`Erro: ${error}`);
+    });
 });
 
 module.exports = ytthumbnail;

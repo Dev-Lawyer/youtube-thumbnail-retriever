@@ -6,7 +6,6 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "nodemon devServer.js"
-
     },
     "repository": {
         "type": "git",
@@ -20,6 +19,8 @@
     "homepage": "https://github.com/OctavioSI/OctavioSI.github.io#readme",
     "dependencies": {
         "express": "^4.17.1",
-        "nodemon": "^2.0.13"
+        "nodemon": "^2.0.13",
+        "request": "^2.88.2",
+        "xmldom": "^0.6.0"
     }
 }
