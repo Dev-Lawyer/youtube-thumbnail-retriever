@@ -1,0 +1,25 @@
+{
+    "name": "octaviosi.github.io",
+    "version": "1.0.0",
+    "description": "Functions of my profile",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "nodemon devServer.js"
+
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/OctavioSI/OctavioSI.github.io.git"
+    },
+    "author": "",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/OctavioSI/OctavioSI.github.io/issues"
+    },
+    "homepage": "https://github.com/OctavioSI/OctavioSI.github.io#readme",
+    "dependencies": {
+        "express": "^4.17.1",
+        "nodemon": "^2.0.13"
+    }
+}
