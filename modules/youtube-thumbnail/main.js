@@ -15,7 +15,6 @@
 
 const https = require('https');
 const request = require('request');
-const channelId = "UCPmM6RAkfC0CY2gGudIhWQA";
 let videoTitle = "";
 let videoViews = "";
 let videoPublishedDate;
@@ -38,7 +37,7 @@ module.exports = {
     tratando como uma Promise: faz a chamada e aguarda o resultado (com o .then()). Se a Promise retornar 
     com sucesso, ele envia os dados para a reposta com res.send(). Caso contrário, teremos um erro.
 */
-function getYTThumbnail(videoId) {
+function getYTThumbnail(channelId, videoId) {
     return new Promise((resolve, reject) => {
         https.get('https://www.youtube.com/feeds/videos.xml?channel_id=' + channelId, (res) => {
             let data = '';
