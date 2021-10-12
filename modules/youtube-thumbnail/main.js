@@ -2,13 +2,7 @@
       Esse módulo faz as operações necessárias para baixarmos as informações do YouTube e popularmos 
       o nosso template. 
 
-      Basicamente é feita uma chamada para a função getYTThumbnail com um parâmetro, que é o videoID. 
-
-      Peço desculpas a todos, mas tirei como parâmetro o channelId, pois caso contrário todos poderiam
-      utilizar essa API e os limites de tráfego no servidor poderiam ficar comprometidos. Acabei deixando
-      o channelID "hardcoded" abaixo, mas em princípio você pode deixá-lo como parâmetro também
-      
-      Sugiro e incentivo que criem a mesma estrutura no seu próprio servidor 😃
+      Basicamente é feita uma chamada para a função getYTThumbnail com dois parâmetros, que são o channelID e o videoID. 
 
       Com o ID do vídeo, filtramos o resultado acima até conseguir achar a correspondência.
 */

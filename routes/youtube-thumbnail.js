@@ -2,8 +2,8 @@
     Esta é uma rota para o módulo do youtube-thumbnail. Ele traz métodos
     para buscar ou enviar dados. No caso, ele tem aqui um método "get", que
     permite que uma solicitação seja feito ao programa em um endereço como
-    "www.seuservidor.com/api/youtube-thumbnail/?videoId=id_do_video" e com 
-    isso a função get faz uma chamada para a função "getYTThumbnail", que foi
+    "www.seuservidor.com/api/youtube-thumbnail/?channelId=id_do_canal&videoId=id_do_video" 
+    e com isso a função get faz uma chamada para a função "getYTThumbnail", que foi
     importada ali do outro arquivo em modules/youtube-thumbnail/main.js
 */
 const ytthumbnail = require("express").Router();
