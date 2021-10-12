@@ -58,7 +58,7 @@ jobs:
           feed_list: "https://www.youtube.com/feeds/videos.xml?channel_id=your_channel_Id" #replace with your channel Id 
           custom_tags: "channelId/yt:channelId/,videoId/yt:videoId/"
           max_post_count: 6
-          template: '$newline[![](https://portfolio.dev.lawyer/api/youtube-thumbnail/?channelId=$channelId&videoId=$videoId)]($url)'
+          template: '$newline[![](https://youtube-thumbnail-retriever.vercel.app/api/youtube-thumbnail/?channelId=$channelId&videoId=$videoId)]($url)'
 ```
 - In your README.md file, insert the following where you want your YouTube list to appear:
 ```
